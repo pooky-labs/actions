@@ -24,7 +24,7 @@ jobs:
         run: echo "::set-output name=value::${GITHUB_SHA::7}-${{ github.run_number }}"
       - id: environment
         run: |
-          if {{ github.ref != 'refs/heads/main' || github.event_name != 'push' }}; the
+          if ${{ github.ref != 'refs/heads/main' || github.event_name != 'push' }}; then
             echo "::set-output name=value::preview"
           else
             echo "::set-output name=value::staging"
