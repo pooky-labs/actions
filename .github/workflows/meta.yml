@@ -20,9 +20,11 @@ jobs:
       build: ${{ steps.build.outputs.value }}
       environment: ${{ steps.environment.outputs.value }}
     steps:
-      - id: build
+      - name: Generate build output
+        id: build
         run: echo "::set-output name=value::${GITHUB_SHA::7}-${{ github.run_number }}"
-      - id: environment
+      - name: Generate environment output
+        id: environment
         run: |
           if ${{ github.ref != 'refs/heads/main' || github.event_name != 'push' }}; then
             echo "::set-output name=value::preview"
