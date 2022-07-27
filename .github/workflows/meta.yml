@@ -1,0 +1,31 @@
+name: Generate build metadata
+
+on:
+  push:
+    branches: [main]
+  workflow_call:
+    outputs:
+      build:
+        description: The workflow build id
+        value: ${{ jobs.generate.outputs.build }}
+      environment:
+        description: The workflow environment, which depends on the branch and the event type
+        value: ${{ jobs.generate.outputs.environment }}
+
+jobs:
+  generate:
+    name: Generate build metadata
+    runs-on: ubuntu-22.04
+    outputs:
+      build: ${{ steps.build.outputs.value }}
+      environment: ${{ steps.environment.outputs.value }}
+    steps:
+      - id: build
+        run: echo "::set-output name=value::${GITHUB_SHA::7}-${{ github.run_number }}"
+      - id: environment
+        run: |
+          if {{ github.ref != 'refs/heads/main' || github.event_name != 'push' }}; the
+            echo "::set-output name=value::preview"
+          else
+            echo "::set-output name=value::staging"
+          fi
