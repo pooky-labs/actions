@@ -26,8 +26,10 @@ jobs:
       - name: Generate environment output
         id: environment
         run: |
-          if ${{ github.ref != 'refs/heads/main' || github.event_name != 'push' }}; then
-            echo "::set-output name=value::preview"
-          else
+          if ${{ startsWith(startsWith, 'refs/tags/v') }}; then
+            echo "::set-output name=value::production"
+          else if ${{ startsWith != 'refs/heads/main' && github.event_name == 'push' }}; then
             echo "::set-output name=value::staging"
+          else 
+            echo "::set-output name=value::preview"
           fi
