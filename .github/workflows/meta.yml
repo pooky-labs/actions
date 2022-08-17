@@ -11,6 +11,9 @@ on:
       environment:
         description: The workflow environment, which depends on the branch and the event type
         value: ${{ jobs.generate.outputs.environment }}
+      version:
+        description: The version, extracted from the GitHub reference if possible
+        value: ${{ jobs.generate.outputs.version }}
 
 jobs:
   generate:
@@ -19,6 +22,7 @@ jobs:
     outputs:
       build: ${{ steps.build.outputs.value }}
       environment: ${{ steps.environment.outputs.value }}
+      version: ${{ steps.version.outputs.value }}
     steps:
       - name: Generate build output
         id: build
@@ -33,3 +37,7 @@ jobs:
           else 
             echo "::set-output name=value::preview"
           fi
+      - name: Generate version output
+        id: version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "::set-output name=value::$(echo '${{ github.ref }}' | sed 's|refs/tags/||')"
