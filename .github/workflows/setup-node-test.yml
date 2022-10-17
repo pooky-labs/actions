@@ -1,0 +1,15 @@
+name: Test pooky-labs/setup-node
+on: push
+jobs:
+  defaults:
+    name: Setup Node with default inputs
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node with default inputs
+        uses: ./setup-node
+      - name: Display versions
+        run: |
+          node --version
+          pnpm --version
