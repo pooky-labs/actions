@@ -1,0 +1,43 @@
+name: Generate build metadata
+
+on:
+  push:
+    branches: [main]
+  workflow_call:
+    outputs:
+      build:
+        description: The workflow build id
+        value: ${{ jobs.generate.outputs.build }}
+      environment:
+        description: The workflow environment, which depends on the branch and the event type
+        value: ${{ jobs.generate.outputs.environment }}
+      version:
+        description: The version, extracted from the GitHub reference if possible
+        value: ${{ jobs.generate.outputs.version }}
+
+jobs:
+  generate:
+    name: Generate build metadata
+    runs-on: ubuntu-22.04
+    outputs:
+      build: ${{ steps.build.outputs.value }}
+      environment: ${{ steps.environment.outputs.value }}
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Generate build output
+        id: build
+        run: echo "value=${GITHUB_SHA=7}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+      - name: Generate environment output
+        id: environment
+        run: |
+          if ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}; then
+            echo "value=production" >> $GITHUB_OUTPUT
+          elif ${{ github.ref == 'refs/heads/dev' && github.event_name == 'push' }}; then
+            echo "value=staging" >> $GITHUB_OUTPUT
+          else 
+            echo "value=preview" >> $GITHUB_OUTPUT
+          fi
+      - name: Generate version output
+        id: version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "value=$(echo '${{ github.ref }}' | sed 's|refs/tags/||')" >> $GITHUB_OUTPUT
