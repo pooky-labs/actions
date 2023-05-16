@@ -1,5 +1,5 @@
-name: Setup Node environment
-description: Prepare the workspace for a Node project.
+name: Setup Foundry environment
+description: Prepare the workspace for a Foundry+Node project.
 inputs:
   node-version:
     description: The Node.js version to install
@@ -8,18 +8,22 @@ inputs:
   pnpm-version:
     description: pnpm version to install
     required: false
-    default: '78'
+    default: '8'
 runs:
   using: composite
   steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Install Foundry
+      uses: foundry-rs/foundry-toolchain@v1
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
     - name: Install pnpm
-      uses: pnpm/action-setup@v2.2.4
+      uses: pnpm/action-setup@v2
       with:
         version: ${{ inputs.pnpm-version }}
     - name: Get pnpm store directory
