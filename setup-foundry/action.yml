@@ -9,6 +9,10 @@ inputs:
     description: pnpm version to install
     required: false
     default: '8'
+  foundry-version:
+    description: foundry version to install
+    required: false
+    default: 'nightly'
 runs:
   using: composite
   steps:
@@ -18,6 +22,8 @@ runs:
         submodules: recursive
     - name: Install Foundry
       uses: foundry-rs/foundry-toolchain@v1
+      with:
+        version: ${{ inputs.foundry-version }}
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
